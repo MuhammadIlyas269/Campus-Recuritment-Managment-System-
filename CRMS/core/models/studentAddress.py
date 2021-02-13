@@ -7,3 +7,6 @@ class StudentAddress(models.Model):
     
     def __str__(self):
         return self.city + self.country
+    
+    class Meta:
+        unique_together = ("country", "city")
