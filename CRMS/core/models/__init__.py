@@ -5,3 +5,6 @@ from .student import Student
 from .workHistory import WorkHistory
 from .qualification import Qualification
 from .projects import Project
+from .companyAddress import CompanyAddress
+from .company import Company
+from .job import Job
