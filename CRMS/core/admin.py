@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 from .models import (
     User,Student,StudentAddress, WorkHistory,
     Qualification, Project, Skill,Company,
-    CompanyAddress,Job,
+    CompanyAddress,Job, Alumni,
 )
 
 # Register your models here.
@@ -18,3 +18,4 @@ admin.site.register(Skill)
 admin.site.register(CompanyAddress)
 admin.site.register(Company)
 admin.site.register(Job)
+admin.site.register(Alumni)
