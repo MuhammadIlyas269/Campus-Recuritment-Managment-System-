@@ -9,7 +9,7 @@ class Student(models.Model):
     email = models.EmailField(max_length=254)
     profile_pic = models.ImageField(upload_to="images/", null=True, blank=False)
     skill = models.ManyToManyField(Skill, blank=True, related_name="student_skills")
-    address = models.ForeignKey(StudentAddress, related_name="student", blank=False, null = True, on_delete=models.CASCADE)
+    address = models.ForeignKey(StudentAddress, related_name="student", null = True, on_delete=models.CASCADE)
     
     def __str__(self):
         return self.name
