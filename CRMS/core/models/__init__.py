@@ -9,3 +9,4 @@ from .companyAddress import CompanyAddress
 from .company import Company
 from .job import Job
 from .alumni import Alumni
+from .saveJob import SaveJobs

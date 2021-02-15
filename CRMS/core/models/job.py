@@ -1,6 +1,7 @@
 from django.db import models
-from . import Company
-
+from . import (
+    Company, Student,
+)
 
 #create models here
 
@@ -39,6 +40,8 @@ class Job(models.Model):
     gender_preference = models.CharField(max_length=2, choices=GENDER_PREFERENCE_CHOICES, default=NO_PREFERENCE,)
     employment_type = models.CharField(max_length=25, choices=EMPLOYMENT_TYPE_CHOICES,)
     status = models.BooleanField(default=True, help_text="show to job recuritment Status")
+    applicants = models.ManyToManyField(to=Student, related_name="Applicants" , blank=True,)
+    
     
     def __str__(self):
         return self.title
