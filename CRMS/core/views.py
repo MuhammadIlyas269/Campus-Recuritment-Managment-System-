@@ -10,11 +10,28 @@ from .models import (
 
 # Create your views here.
 
+def REDIRECT_VIEW(request):
+    if request.user.is_student:
+        return redirect('core:student_page')
+    elif request.user.is_company:
+        return redirect('core:company_page')
+    elif request.user.is_superuser:
+        return redirect('http://127.0.0.1:8000/admin/')
+
+
+class StudentPage(TemplateView):
+    template_name = 'studentPage.html'
+
+class CompanyPage(TemplateView):
+    template_name = 'companyPage.html'
+
 class Home(TemplateView):
     template_name = 'base.html'
 
+
 class SignupView(TemplateView):
     template_name = 'registration/signup.html'
+
 
 class StudentSignupView(CreateView):
     model = User
@@ -29,6 +46,7 @@ class StudentSignupView(CreateView):
         user = form.save()
         login(self.request, user)
         return redirect('core:home')
+
 
 class CompanySignupView(CreateView):
     model = User

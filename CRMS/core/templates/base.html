@@ -21,11 +21,11 @@
         <li><a href = "{% url 'core:login' %}">Login</a></li>
         {% endif %}
     </ul>
-    {% if user.is_authenticated and user.is_student %}
+    {% comment %} {% if user.is_authenticated and user.is_student %}
         <h1>Student Page</h1>
     {% elif user.is_authenticated and user.is_company %}
         <h1>Company Page</h1>
-    {% endif %}
+    {% endif %} {% endcomment %}
 
     {% block content %}
 
