@@ -1,6 +1,6 @@
 from django.db import models
 from . import (
-    Skill,StudentAddress,
+    Skill,StudentAddress,User,
 )
 
 # import models
@@ -8,6 +8,7 @@ from . import (
 
 
 class Student(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     stud_id = models.CharField(max_length=25, null=True, blank=False)
     name = models.CharField(max_length=50)
     about_me = models.TextField(blank=False)
