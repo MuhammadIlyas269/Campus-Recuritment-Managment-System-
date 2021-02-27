@@ -39,7 +39,7 @@ class Job(models.Model):
     flyer = models.ImageField(upload_to="images/jobs/", null=True, blank=True)
     gender_preference = models.CharField(max_length=2, choices=GENDER_PREFERENCE_CHOICES, default=NO_PREFERENCE,)
     employment_type = models.CharField(max_length=25, choices=EMPLOYMENT_TYPE_CHOICES,)
-    status = models.BooleanField(default=True, help_text="show to job recuritment Status")
+    status = models.BooleanField(default=True, help_text="show the job recuritment Status")
     applicants = models.ManyToManyField(to=Student, related_name="Applicants" , blank=True,)
     
     

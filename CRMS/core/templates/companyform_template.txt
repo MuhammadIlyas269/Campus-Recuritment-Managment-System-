@@ -1,0 +1,3 @@
+Full Name: {{name}}
+Registration No: {{registration_no}}
+contact: {{contact}}

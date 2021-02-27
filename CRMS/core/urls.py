@@ -1,7 +1,8 @@
 from django.urls import path, include
 from .views import(
      Home, SignupView, StudentSignupView,CompanySignupView,
-     StudentPage,CompanyPage,REDIRECT_VIEW,
+     StudentPage,CompanyPage,REDIRECT_VIEW, CompanySignupRequestView,
+     StudentSignupRequestView,
 )
 from django.conf import settings 
 from django.conf.urls.static import static 
@@ -22,6 +23,10 @@ urlpatterns = [
     path('accounts/student/me/',StudentPage.as_view(), name='student_page'),
     path('accounts/company/me/',CompanyPage.as_view(), name='company_page'),
     path('admin/', admin.site.urls, name='admin_page'),
+    
+    #signup request urls
+    path('signup/company/',CompanySignupRequestView.as_view(), name = 'company_signup_request'),
+    path('signup/student/',StudentSignupRequestView.as_view(), name = 'student_signup_request'),
 
 
 

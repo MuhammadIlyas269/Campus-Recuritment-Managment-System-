@@ -1,0 +1,4 @@
+Student Name : {{name}}
+Roll No : {{stud_id}}
+Student card Front side : {{card_front}}
+Student card Back side : {{card_back}}
