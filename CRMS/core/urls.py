@@ -1,8 +1,8 @@
 from django.urls import path, include
 from .views import(
      Home, SignupView, StudentSignupView,CompanySignupView,
-     StudentPage,CompanyPage,REDIRECT_VIEW, CompanySignupRequestView,
-     StudentSignupRequestView,
+     StudentPage,CompanyPage,ModratorPage,REDIRECT_VIEW, CompanySignupRequestView,
+     StudentSignupRequestView,CreateJobPostView,
 )
 from django.conf import settings 
 from django.conf.urls.static import static 
@@ -20,8 +20,13 @@ urlpatterns = [
    
     path('redirect/', REDIRECT_VIEW, name='REDIRECT_VIEW'),
     
+    #uers Page + admin panel
     path('accounts/student/me/',StudentPage.as_view(), name='student_page'),
+    
     path('accounts/company/me/',CompanyPage.as_view(), name='company_page'),
+    path('accounts/company/me/createJob/',CreateJobPostView.as_view(), name='create_job'),
+
+    path('accounts/admin/me/',ModratorPage.as_view(), name='modrator_page'),
     path('admin/', admin.site.urls, name='admin_page'),
     
     #signup request urls

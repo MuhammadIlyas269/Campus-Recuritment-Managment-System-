@@ -1,9 +1,11 @@
-from django.shortcuts import render,redirect
+from core.models.job import Job
+from django.shortcuts import render,redirect,reverse
 from django.contrib.auth import login
 from django.views.generic import CreateView, TemplateView
 from django.views import View
 from . forms import (
     StudentSignupForm,CompanySignupForm, CompanyRequestForm, StudentRequestForm,
+    JobForm,
 )
 from .models import (
     Student, User,Company,
@@ -109,7 +111,7 @@ def REDIRECT_VIEW(request):
     elif request.user.is_company:
         return redirect('core:company_page')
     elif request.user.is_superuser:
-        return redirect('http://127.0.0.1:8000/admin/')
+        return redirect('core:modrator_page')
 
 
 class StudentPage(TemplateView):
@@ -117,6 +119,9 @@ class StudentPage(TemplateView):
 
 class CompanyPage(TemplateView):
     template_name = 'companyPage.html'
+
+class ModratorPage(TemplateView):
+    template_name = 'modratorPage.html'
 
 class Home(TemplateView):
     template_name = 'base.html'
@@ -138,7 +143,7 @@ class StudentSignupView(CreateView):
     def form_valid(self,form):
         user = form.save()
         login(self.request, user)
-        return redirect('core:home')
+        return redirect('core:REDIRECT_VIEW')
 
 
 class CompanySignupView(CreateView):
@@ -153,8 +158,22 @@ class CompanySignupView(CreateView):
     def form_valid(self,form):
         user = form.save()
         login(self.request, user)
-        return redirect('core:home')
+        return redirect('core:REDIRECT_VIEW')
 
+class CreateJobPostView(CreateView):
+
+    model = Job
+    form_class=JobForm
+    template_name = 'createJob.html'
+    
+    def get_form_kwargs(self):
+        kwargs = super(CreateJobPostView, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        # kwargs['user'] = self.request.user
+        return kwargs
+
+    
+        
 
 
 

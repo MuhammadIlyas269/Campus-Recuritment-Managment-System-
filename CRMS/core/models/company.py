@@ -8,9 +8,10 @@ from . import (
 
 class Company(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    registration_no = models.CharField(max_length=100, unique=True, null=True)
     name = models.CharField(max_length=50, unique=True, null=True)
     about = models.TextField()
-    stud_email = models.EmailField(max_length=254)
+    comp_email = models.EmailField(max_length=254)
     contact = models.CharField(max_length=25, null=True)
     social_link = models.URLField(max_length=255, null=True)
     website = models.URLField(max_length=255, null=True)

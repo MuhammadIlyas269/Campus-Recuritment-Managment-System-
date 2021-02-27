@@ -1,7 +1,7 @@
-from core.models import student
+from core.models import company, student
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from . models import User, Student, Company
+from . models import User, Student, Company,Job
 
 #create forms here 
 
@@ -14,7 +14,7 @@ class StudentSignupForm(UserCreationForm):
         user = super().save(commit=False)
         user.is_student = True
         user.save()
-        Student.objects.create(user=user)
+        # Student.objects.create(user=user)
         return user
 
 
@@ -27,7 +27,7 @@ class CompanySignupForm(UserCreationForm):
         user = super().save(commit=False)
         user.is_company = True
         user.save()
-        Company.objects.create(user=user)
+        # Company.objects.create(user=user)
         return user
 
 
@@ -57,7 +57,24 @@ class StudentRequestForm(forms.Form):
     #     is_alumni = cleaned_data.get('is_alumni')
     #     if is_alumni == True:
     #         self.fields["transcript"] = forms.ImageField(label='Upload transcript')
+
+class JobForm(forms.ModelForm):
+    
+    class Meta:
+        model = Job
+        # fields = '__all__'
+        exclude =['applicants']
+
+    def __init__(self,*args,**kwargs):
+        user = kwargs.pop('user')
+        # self.company = user
         
+        super(JobForm, self).__init__(*args,**kwargs)
+        self.fields["company"].queryset = Company.objects.filter(user = user)
+    
+    
+
+
 
 
 
