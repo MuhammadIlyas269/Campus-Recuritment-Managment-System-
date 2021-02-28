@@ -5,7 +5,7 @@ from django.views.generic import CreateView, TemplateView
 from django.views import View
 from . forms import (
     StudentSignupForm,CompanySignupForm, CompanyRequestForm, StudentRequestForm,
-    JobForm,
+    JobForm,CompanyProfileForm,
 )
 from .models import (
     Student, User,Company,
@@ -169,7 +169,16 @@ class CreateJobPostView(CreateView):
     def get_form_kwargs(self):
         kwargs = super(CreateJobPostView, self).get_form_kwargs()
         kwargs.update({'user': self.request.user})
-        # kwargs['user'] = self.request.user
+        return kwargs
+
+class CompanyProfileView(CreateView):
+    model = Company
+    form_class = CompanyProfileForm
+    template_name = 'companyProfile.html'
+
+    def get_form_kwargs(self):
+        kwargs = super(CompanyProfileView, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
         return kwargs
 
     

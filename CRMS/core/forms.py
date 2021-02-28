@@ -14,7 +14,6 @@ class StudentSignupForm(UserCreationForm):
         user = super().save(commit=False)
         user.is_student = True
         user.save()
-        # Student.objects.create(user=user)
         return user
 
 
@@ -27,7 +26,6 @@ class CompanySignupForm(UserCreationForm):
         user = super().save(commit=False)
         user.is_company = True
         user.save()
-        # Company.objects.create(user=user)
         return user
 
 
@@ -62,15 +60,23 @@ class JobForm(forms.ModelForm):
     
     class Meta:
         model = Job
-        # fields = '__all__'
         exclude =['applicants']
 
     def __init__(self,*args,**kwargs):
-        user = kwargs.pop('user')
-        # self.company = user
-        
+        user = kwargs.pop('user') 
         super(JobForm, self).__init__(*args,**kwargs)
         self.fields["company"].queryset = Company.objects.filter(user = user)
+
+class CompanyProfileForm(forms.ModelForm):
+    
+    class Meta:
+        model = Company
+        exclude = ['followers']
+
+    def __init__(self,*args,**kwargs):
+        user = kwargs.pop('user')
+        super(CompanyProfileForm, self).__init__(*args,**kwargs)
+        self.fields["user"].queryset = User.objects.filter(username=user)
     
     
 

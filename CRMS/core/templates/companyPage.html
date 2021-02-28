@@ -1,6 +1,9 @@
 {% extends 'base.html'%}
 
 {% block content%}
+
     <h1>Welcome to Company Page</h1>
     <a href="{% url 'core:create_job' %}" class="btn btn-student btn-lg" role="button">Create A job Post</a>
+    <a href="{% url 'core:company_profile' %}" class="btn btn-student btn-lg" role="button">Create Profile</a>
+
 {% endblock %}

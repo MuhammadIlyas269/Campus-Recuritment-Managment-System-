@@ -2,7 +2,7 @@ from django.urls import path, include
 from .views import(
      Home, SignupView, StudentSignupView,CompanySignupView,
      StudentPage,CompanyPage,ModratorPage,REDIRECT_VIEW, CompanySignupRequestView,
-     StudentSignupRequestView,CreateJobPostView,
+     StudentSignupRequestView,CreateJobPostView,CompanyProfileView,
 )
 from django.conf import settings 
 from django.conf.urls.static import static 
@@ -24,6 +24,7 @@ urlpatterns = [
     path('accounts/student/me/',StudentPage.as_view(), name='student_page'),
     
     path('accounts/company/me/',CompanyPage.as_view(), name='company_page'),
+    path('accounts/company/profile/',CompanyProfileView.as_view(), name='company_profile'),
     path('accounts/company/me/createJob/',CreateJobPostView.as_view(), name='create_job'),
 
     path('accounts/admin/me/',ModratorPage.as_view(), name='modrator_page'),
