@@ -36,6 +36,7 @@ class CompanyRequestForm(forms.Form):
     email = forms.EmailField(label="Email")
     contact_no = forms.CharField(label="Contact No")
 
+
 class StudentRequestForm(forms.Form):
     name = forms.CharField(max_length=50,label='Full Name')
     stud_id = forms.CharField(max_length=25, label='Your Registeration Id',)
@@ -45,28 +46,30 @@ class StudentRequestForm(forms.Form):
     email = forms.EmailField(label='Email')
     transcript = forms.ImageField(label='Transcript', help_text='upload Your Final year Transcript')
 
+
+
 class JobForm(forms.ModelForm):
     
     class Meta:
         model = Job
-        exclude =['applicants']
+        exclude =['company', 'applicants']
 
-    def __init__(self,*args,**kwargs):
-        user = kwargs.pop('user') 
-        super(JobForm, self).__init__(*args,**kwargs)
-        self.fields["company"].queryset = Company.objects.filter(user = user)
+    # def __init__(self,*args,**kwargs):
+    #     user = kwargs.pop('user') 
+    #     super(JobForm, self).__init__(*args,**kwargs)
+    #     self.fields["company"].queryset = Company.objects.filter(user = user)
 
 class CompanyProfileForm(forms.ModelForm):
     
     class Meta:
         model = Company
-        exclude = ['followers','address',]
+        exclude = ['followers','address','user',]
 
-    def __init__(self,*args,**kwargs):
-        user = kwargs.pop('user',None)
+    # def __init__(self,*args,**kwargs):
+    #     user = kwargs.pop('user',None)
         
-        super(CompanyProfileForm, self).__init__(*args,**kwargs)
-        self.fields["user"].queryset = User.objects.filter(username=user)
+    #     super(CompanyProfileForm, self).__init__(*args,**kwargs)
+    #     self.fields["user"].queryset = User.objects.filter(username=user)
 
 class CompanyAddressForm(forms.ModelForm):
 

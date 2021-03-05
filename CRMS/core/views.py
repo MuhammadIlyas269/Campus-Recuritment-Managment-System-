@@ -109,6 +109,8 @@ class StudentSignupRequestView(View):
                 'card_back':card_back,
                 
             }
+
+            
             
             msg = render_to_string('student_email_form.txt',context)
             email = EmailMessage(
@@ -165,17 +167,17 @@ class CreateJobPostView(CreateView):
     form_class=JobForm
     template_name = 'createJob.html'
     
-    # def get_form_kwargs(self):
-    #     kwargs = super(CreateJobPostView, self).get_form_kwargs()
-    #     kwargs.update({'user': self.request.user})
-    #     return kwargs
+    def form_valid(self,form):
+        user = Company.objects.get(user = self.request.user)
+        form.instance.company = user
+        return super().form_valid(form)
 
 
 
 class CompanyProfileView(View):
     
     def get(self, request, ):
-        profile_form = CompanyProfileForm(user=request.user)
+        profile_form = CompanyProfileForm()
         address_form = CompanyAddressForm()
         context = {
             'address_form':address_form,
@@ -185,7 +187,7 @@ class CompanyProfileView(View):
     
 
     def post(self, request, ):
-        profile_form = CompanyProfileForm(request.POST,user=request.user)
+        profile_form = CompanyProfileForm(request.POST,)
         address_form = CompanyAddressForm(request.POST)
         
         if address_form.is_valid() and profile_form.is_valid():
@@ -198,7 +200,7 @@ class CompanyProfileView(View):
 
 
             try:
-                company = Company(user=company_cd['user'],registration_no=company_cd['registration_no'], name=company_cd['name'], 
+                company = Company(user=request.user,registration_no=company_cd['registration_no'], name=company_cd['name'], 
                 about=company_cd['about'],comp_email=company_cd['comp_email'],contact=company_cd['contact'],social_link=company_cd['social_link'],
                 website=company_cd['website'],address=address_instance)
                 company.save()  
