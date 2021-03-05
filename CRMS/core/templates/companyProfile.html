@@ -5,7 +5,9 @@
 {% block content%}
 <form method="post" enctype="multipart/form-data">
     {%csrf_token%}
-    {{ form|crispy }}
+    {% comment %} {{form|crispy }} {% endcomment %}
+    {{ profile_form|crispy }}
+    {{ address_form|crispy }}
     <button type="submit" class="btn btn-success">Create</button>
 </form>
 

@@ -1,9 +1,58 @@
 {% extends 'base.html'%}
+
+{% comment %} <style>
+    #dynamic {
+        display: none;
+    }
+</style> {% endcomment %}
+
+
+
 {% load crispy_forms_tags %}
 {% block content%}
 <form method="post" action='' enctype="multipart/form-data">
     {% csrf_token %}
-    {{ form|crispy }}
+        <label for="name" class="mr-3">Name:</label>
+        {{form.name}}
+        <br>
+        <label for="stud_id" class="mr-3">Registration ID:</label>
+        {{form.stud_id}}
+        <br>
+        <label for="is_alumni" id = "alumni" class="mr-3">Are You Alumni:</label>
+        {{form.is_alumni}}
+        <br> 
+        <label for="frontcard" class="mr-3">Upload Card front:</label>
+        {{form.card_front}}
+        <br>
+        <label for="Backcard" class="mr-3">Upload Card back:</label>
+        {{form.card_back}}
+        <br>
+        <label for="email" class="mr-3">Email:</label>
+        {{form.email}}
+        <br>
+        <div id="dynamic" style="display: none">
+        <label for="Transcript" class="mr-3">Upload Final Year Transcript:</label>
+        {{form.transcript}}
+        </div> 
     <button type="submit" class="btn btn-success">Sign up</button>
 </form>
 {%endblock%}
+
+
+{% block script %}
+<script>
+
+    var alumni = document.getElementById("isAlumni");
+    var uploadTranscript = document.getElementById("dynamic");
+    
+    alumni.addEventListener("change", function() {
+        if (this.checked) {
+            uploadTranscript.style.display = "block";
+        } else {
+            uploadTranscript.style.display = "none";
+        }
+    })
+
+
+</script>
+{%endblock %}

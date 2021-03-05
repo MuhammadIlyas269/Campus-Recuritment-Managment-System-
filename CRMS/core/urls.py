@@ -7,18 +7,48 @@ from .views import(
 from django.conf import settings 
 from django.conf.urls.static import static 
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 
 #create urls here 
 
 app_name = 'core'
 urlpatterns = [
     path('', Home.as_view(), name='home'),
-    path('accounts/', include('django.contrib.auth.urls')),
+
+    # path('accounts/', include('django.contrib.auth.urls')),
+
+    ######### Login and Logout #####################
+    path('accounts/login/', auth_views.LoginView.as_view(),name='login'),
+    path('accounts/logout/', auth_views.LogoutView.as_view(),name='logout'),
+
+    ########### Rediret View after Successfull Login #############################
+    path('redirect/', REDIRECT_VIEW, name='REDIRECT_VIEW'), 
+   
+   
+    ########## Password reset urls ##################
+    path('accounts/password-reset/',auth_views.PasswordResetView.as_view(
+             template_name='registration/password/password_reset_form.html',
+             subject_template_name='registration/password/password_reset_subject.txt',
+             email_template_name='registration/password/password_reset_email.html',
+             success_url='/core/accounts/password-reset/done/'),name='password_reset'),
+   
+    path('accounts/password-reset/done/',auth_views.PasswordResetDoneView.as_view(
+             template_name='registration/password/password_reset_done.html'),name='password_reset_done'),
+   
+    path('accounts/password-reset-confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
+             template_name='registration/password/password_reset_confirm.html',
+             success_url='/core/accounts/password-reset-complete/' ),name='password_reset_confirm'),
+    
+    path('accounts/password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(
+             template_name='registration/password/password_reset_complete.html' ),name='password_reset_complete'),
+
+
+
+    ############ Signup Form ################
     path('accounts/signup/', SignupView.as_view(), name='signup'),
     path('accounts/signup/student/', StudentSignupView.as_view(), name='student_signup'),
     path('accounts/signup/company/', CompanySignupView.as_view(), name='company_signup'),
    
-    path('redirect/', REDIRECT_VIEW, name='REDIRECT_VIEW'),
     
     #uers Page + admin panel
     path('accounts/student/me/',StudentPage.as_view(), name='student_page'),

@@ -5,16 +5,44 @@ from django.views.generic import CreateView, TemplateView
 from django.views import View
 from . forms import (
     StudentSignupForm,CompanySignupForm, CompanyRequestForm, StudentRequestForm,
-    JobForm,CompanyProfileForm,
+    JobForm,CompanyProfileForm,CompanyAddressForm,
 )
 from .models import (
-    Student, User,Company,
+    Student, User,Company,CompanyAddress,
 )
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
 
 # Create your views here.
+
+def REDIRECT_VIEW(request):
+    if request.user.is_student:
+        return redirect('core:student_page')
+    elif request.user.is_company:
+        return redirect('core:company_page')
+    elif request.user.is_superuser:
+        return redirect('core:modrator_page')
+
+
+class StudentPage(TemplateView):
+    template_name = 'studentPage.html'
+
+class CompanyPage(TemplateView):
+    template_name = 'companyPage.html'
+
+class ModratorPage(TemplateView):
+    template_name = 'modratorPage.html'
+
+class Home(TemplateView):
+    template_name = 'base.html'
+
+
+class SignupView(TemplateView):
+    template_name = 'registration/signup.html'
+
+
+
 
 class CompanySignupRequestView(View):
     
@@ -57,12 +85,12 @@ class CompanySignupRequestView(View):
 
 class StudentSignupRequestView(View):
     
-    def get(self, request):
+    def get(self,request):
         form = StudentRequestForm()
         data = {'form':form}
         return render(request, 'requestForm.html',context=data)
     
-    def post(self, request):
+    def post(self,request):
         form = StudentRequestForm(request.POST, request.FILES)
         if form.is_valid():
             cd = form.cleaned_data
@@ -81,10 +109,6 @@ class StudentSignupRequestView(View):
                 'card_back':card_back,
                 
             }
-
-            # if is_alumni:
-            #     transcript = request.FILES['transcript']
-            #     context['transcript'] =transcript
             
             msg = render_to_string('student_email_form.txt',context)
             email = EmailMessage(
@@ -93,7 +117,6 @@ class StudentSignupRequestView(View):
                 from_email = "jokermafia269@gmail.com",
                 to = [str(to_email),],
                 bcc = [str(to_email),],
-                # attachments= [card_front,card_back,]
             )
             email.attach(card_front.name, card_front.read(), card_front.content_type)
             email.attach(card_back.name, card_back.read(), card_back.content_type)
@@ -105,30 +128,6 @@ class StudentSignupRequestView(View):
 
 
 
-def REDIRECT_VIEW(request):
-    if request.user.is_student:
-        return redirect('core:student_page')
-    elif request.user.is_company:
-        return redirect('core:company_page')
-    elif request.user.is_superuser:
-        return redirect('core:modrator_page')
-
-
-class StudentPage(TemplateView):
-    template_name = 'studentPage.html'
-
-class CompanyPage(TemplateView):
-    template_name = 'companyPage.html'
-
-class ModratorPage(TemplateView):
-    template_name = 'modratorPage.html'
-
-class Home(TemplateView):
-    template_name = 'base.html'
-
-
-class SignupView(TemplateView):
-    template_name = 'registration/signup.html'
 
 
 class StudentSignupView(CreateView):
@@ -166,20 +165,58 @@ class CreateJobPostView(CreateView):
     form_class=JobForm
     template_name = 'createJob.html'
     
-    def get_form_kwargs(self):
-        kwargs = super(CreateJobPostView, self).get_form_kwargs()
-        kwargs.update({'user': self.request.user})
-        return kwargs
+    # def get_form_kwargs(self):
+    #     kwargs = super(CreateJobPostView, self).get_form_kwargs()
+    #     kwargs.update({'user': self.request.user})
+    #     return kwargs
 
-class CompanyProfileView(CreateView):
-    model = Company
-    form_class = CompanyProfileForm
-    template_name = 'companyProfile.html'
 
-    def get_form_kwargs(self):
-        kwargs = super(CompanyProfileView, self).get_form_kwargs()
-        kwargs.update({'user': self.request.user})
-        return kwargs
+
+class CompanyProfileView(View):
+    
+    def get(self, request, ):
+        profile_form = CompanyProfileForm(user=request.user)
+        address_form = CompanyAddressForm()
+        context = {
+            'address_form':address_form,
+            'profile_form':profile_form,
+        }
+        return render(request,'companyProfile.html', context)
+    
+
+    def post(self, request, ):
+        profile_form = CompanyProfileForm(request.POST,user=request.user)
+        address_form = CompanyAddressForm(request.POST)
+        
+        if address_form.is_valid() and profile_form.is_valid():
+
+            address_cd = address_form.cleaned_data
+            company_cd = profile_form.cleaned_data
+
+            address_instance = CompanyAddress(country=address_cd['country'],state=address_cd['state'],city=address_cd['city'],address=address_cd['address'])
+            address_instance.save()
+
+
+            try:
+                company = Company(user=company_cd['user'],registration_no=company_cd['registration_no'], name=company_cd['name'], 
+                about=company_cd['about'],comp_email=company_cd['comp_email'],contact=company_cd['contact'],social_link=company_cd['social_link'],
+                website=company_cd['website'],address=address_instance)
+                company.save()  
+                
+
+            
+            except:
+                pass
+
+            return redirect('core:company_page')
+        return render(request, 'companyProfile.html',{'profile_form':profile_form, 'address_form':address_form})
+    
+    
+
+    
+    
+            
+
 
     
         
