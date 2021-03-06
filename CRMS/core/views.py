@@ -1,7 +1,10 @@
 from core.models.job import Job
-from django.shortcuts import render,redirect,reverse
+from django.shortcuts import render,redirect
+from django.urls import reverse_lazy
 from django.contrib.auth import login
-from django.views.generic import CreateView, TemplateView
+from django.views.generic import (
+    CreateView, TemplateView, FormView,
+)
 from django.views import View
 from . forms import (
     StudentSignupForm,CompanySignupForm, CompanyRequestForm, StudentRequestForm,
@@ -83,49 +86,45 @@ class CompanySignupRequestView(View):
         return render(request, 'requestForm.html',{'form':form})
 
 
-class StudentSignupRequestView(View):
+class StudentSignupRequestView(FormView):
+    form_class = StudentRequestForm
+    template_name = 'requestForm.html'
+    success_url = reverse_lazy('core:success')
     
-    def get(self,request):
-        form = StudentRequestForm()
-        data = {'form':form}
-        return render(request, 'requestForm.html',context=data)
-    
-    def post(self,request):
-        form = StudentRequestForm(request.POST, request.FILES)
-        if form.is_valid():
-            cd = form.cleaned_data
-            name = cd['name']
-            stud_id = cd['stud_id']
-            to_email = cd['email']
-            card_front =request.FILES['card_front']
-            card_back = request.FILES['card_back']
-            is_alumni = cd['is_alumni']
-            context = {
-                'name':name,
-                'stud_id':stud_id,
-                'is_alumni':is_alumni, 
-                'to_email':to_email,
-                'card_front':card_front,
-                'card_back':card_back,
-                
-            }
+    def form_valid(self,form):
+        self.send_mail(form.cleaned_data)
+        return super(StudentSignupRequestView, self).form_valid(form)
 
-            
-            
-            msg = render_to_string('student_email_form.txt',context)
-            email = EmailMessage(
+    
+    def send_mail(self,valid_data):
+        context = super().get_context_data()
+    
+        
+        if valid_data['is_alumni']:
+            context['transcript'] = valid_data['transcript']
+        else:
+            context['card_front'] = valid_data['card_front']
+            context['card_back'] = valid_data['card_back']
+        
+        msg = render_to_string('student_email_form.txt',context)
+        
+        email = EmailMessage(
                 subject='Student Signup Request',
                 body = msg,
                 from_email = "jokermafia269@gmail.com",
-                to = [str(to_email),],
-                bcc = [str(to_email),],
-            )
-            email.attach(card_front.name, card_front.read(), card_front.content_type)
-            email.attach(card_back.name, card_back.read(), card_back.content_type)
+                to = [str(valid_data['email']),],
+                bcc = [str(valid_data['email']),],
+        )
+        
+        if valid_data['is_alumni']:
+            email.attach(valid_data['transcript'].name,valid_data['transcript'].read(),valid_data['transcript'].content_type) 
+        else:
+            email.attach(valid_data['card_front'].name, valid_data['card_front'].read(), valid_data['card_front'].content_type) 
+            email.attach(valid_data['card_back'].name, valid_data['card_back'].read(), valid_data['card_back'].content_type)
 
-            email.send()
-            return render(request, 'success.html')
-        return render(request, 'requestForm.html',{'form':form})
+        email.send()
+        
+
 
 
 

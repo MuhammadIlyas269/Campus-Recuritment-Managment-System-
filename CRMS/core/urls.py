@@ -8,6 +8,7 @@ from django.conf import settings
 from django.conf.urls.static import static 
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
+from django.views.generic.base import TemplateView
 
 #create urls here 
 
@@ -47,12 +48,14 @@ urlpatterns = [
     ############ Signup Form ################
     path('accounts/signup/', SignupView.as_view(), name='signup'),
     path('accounts/signup/student/', StudentSignupView.as_view(), name='student_signup'),
+    
     path('accounts/signup/company/', CompanySignupView.as_view(), name='company_signup'),
    
     
     #uers Page + admin panel
     path('accounts/student/me/',StudentPage.as_view(), name='student_page'),
-    
+    path('accounts/student/me/success/', TemplateView.as_view(template_name='success.html'), name='success'),
+
     path('accounts/company/me/',CompanyPage.as_view(), name='company_page'),
     path('accounts/company/profile/',CompanyProfileView.as_view(), name='company_profile'),
     path('accounts/company/me/createJob/',CreateJobPostView.as_view(), name='create_job'),

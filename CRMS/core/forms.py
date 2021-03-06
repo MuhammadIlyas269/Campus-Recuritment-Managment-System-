@@ -40,11 +40,11 @@ class CompanyRequestForm(forms.Form):
 class StudentRequestForm(forms.Form):
     name = forms.CharField(max_length=50,label='Full Name')
     stud_id = forms.CharField(max_length=25, label='Your Registeration Id',)
-    is_alumni = forms.BooleanField(label='Are you Alumni', widget=forms.CheckboxInput(attrs={'id': 'isAlumni'}))
-    card_front = forms.ImageField(label='Upload a front side of Id Card')
-    card_back = forms.ImageField(label='Upload a back side of Id Card')
+    is_alumni = forms.BooleanField(label='Are you Alumni',required=False,widget=forms.CheckboxInput(attrs={'id': 'isAlumni'}))
+    card_front = forms.ImageField(label='Upload a front side of Id Card',required=False)
+    card_back = forms.ImageField(label='Upload a back side of Id Card',required=False)
     email = forms.EmailField(label='Email')
-    transcript = forms.ImageField(label='Transcript', help_text='upload Your Final year Transcript')
+    transcript = forms.ImageField(label='Transcript', help_text='upload Your Final year Transcript',required=False)
 
 
 
