@@ -46,49 +46,40 @@ class SignupView(TemplateView):
 
 
 
+# Company Signup Request Form 
 
-class CompanySignupRequestView(View):
+class CompanySignupRequestView(FormView):
+    form_class = CompanyRequestForm
+    template_name = 'companyRequestForm.html'
+    success_url = reverse_lazy('core:success')
+
+    def form_valid(self,form):
+        self.send_mail(form.cleaned_data)
+        return super(CompanySignupRequestView, self).form_valid(form)
     
-    def get(self, request):
-        form = CompanyRequestForm()
-        data = {'form':form}
-        return render(request,'requestForm.html',context=data)
-    
-    def post(self, request):
-        form = CompanyRequestForm(request.POST)
-        if form.is_valid():
-            name = form.cleaned_data['name']
-            registration_no = form.cleaned_data['registration_no']
-            to_email = form.cleaned_data['email']
-            contact = form.cleaned_data['contact_no']
-            
-            context = {
-                'name':name,
-                'registration_no':registration_no,
-                'to_email':to_email,
-                'contact':contact
-            }
-            message = render_to_string('companyform_template.txt', context,)
-            
-            #sending mail to admin
-            
-            
-            email = EmailMessage(
-                subject = 'Company Signup Request',
-                body = message,
-                from_email= 'jokermafia269@gmail.com',
-                to = [str(to_email)],
-                bcc= [str(to_email),],
-            )
+    def send_mail(self,valid_data):
+        context = super().get_context_data()
+        context['name']= valid_data['name']
+        context['registration_no']= valid_data['registration_no']
+        context['contact']= valid_data['contact_no']
 
-            email.send()
-            return render(request, 'success.html')
-        return render(request, 'requestForm.html',{'form':form})
+        message = render_to_string('companyform_template.txt', context)
+        #sending mail to admin    
+        email = EmailMessage(
+            subject = 'Company Signup Request',
+            body = message,
+            from_email= 'jokermafia269@gmail.com',
+            to = [str(valid_data['email'])],
+            bcc= [str(valid_data['email']),],
+        )
+        email.send()
 
+        
 
+# Student signup request form
 class StudentSignupRequestView(FormView):
     form_class = StudentRequestForm
-    template_name = 'requestForm.html'
+    template_name = 'studentRequestForm.html'
     success_url = reverse_lazy('core:success')
     
     def form_valid(self,form):
@@ -124,12 +115,6 @@ class StudentSignupRequestView(FormView):
 
         email.send()
         
-
-
-
-
-
-
 
 class StudentSignupView(CreateView):
     model = User
@@ -190,7 +175,6 @@ class CompanyProfileView(View):
         address_form = CompanyAddressForm(request.POST)
         
         if address_form.is_valid() and profile_form.is_valid():
-
             address_cd = address_form.cleaned_data
             company_cd = profile_form.cleaned_data
 

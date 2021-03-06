@@ -47,14 +47,15 @@ urlpatterns = [
 
     ############ Signup Form ################
     path('accounts/signup/', SignupView.as_view(), name='signup'),
+    path('accounts/signup/success/', TemplateView.as_view(template_name='success.html'), name='success'),
+    
     path('accounts/signup/student/', StudentSignupView.as_view(), name='student_signup'),
     
     path('accounts/signup/company/', CompanySignupView.as_view(), name='company_signup'),
-   
+    
     
     #uers Page + admin panel
     path('accounts/student/me/',StudentPage.as_view(), name='student_page'),
-    path('accounts/student/me/success/', TemplateView.as_view(template_name='success.html'), name='success'),
 
     path('accounts/company/me/',CompanyPage.as_view(), name='company_page'),
     path('accounts/company/profile/',CompanyProfileView.as_view(), name='company_profile'),
