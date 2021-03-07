@@ -17,6 +17,9 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
 
+
+
+
 # Create your views here.
 
 def REDIRECT_VIEW(request):
@@ -89,6 +92,11 @@ class StudentSignupRequestView(FormView):
     
     def send_mail(self,valid_data):
         context = super().get_context_data()
+
+        context['name'] = valid_data['name']
+        context['stud_id'] = valid_data['stud_id']
+        context['card_front'] = valid_data['card_front']
+        context['card_back'] = valid_data['card_back']
     
         
         if valid_data['is_alumni']:
