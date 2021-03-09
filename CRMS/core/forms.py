@@ -2,8 +2,10 @@ from django.http import request
 from core.models import company, student
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from . models import User, Student, Company,Job, CompanyAddress
-
+from . models import (
+    User, Student, Company,Job, CompanyAddress,
+    StudentAddress, Skill,
+)
 #create forms here 
 
 class StudentSignupForm(UserCreationForm):
@@ -19,7 +21,6 @@ class StudentSignupForm(UserCreationForm):
 
 
 class CompanySignupForm(UserCreationForm):
-
     class Meta(UserCreationForm.Meta):
         model = User
 
@@ -48,19 +49,7 @@ class StudentRequestForm(forms.Form):
 
 
 
-class JobForm(forms.ModelForm):
-    
-    class Meta:
-        model = Job
-        exclude =['company', 'applicants']
-
-    # def __init__(self,*args,**kwargs):
-    #     user = kwargs.pop('user') 
-    #     super(JobForm, self).__init__(*args,**kwargs)
-    #     self.fields["company"].queryset = Company.objects.filter(user = user)
-
 class CompanyProfileForm(forms.ModelForm):
-    
     class Meta:
         model = Company
         exclude = ['followers','address','user',]
@@ -72,11 +61,37 @@ class CompanyProfileForm(forms.ModelForm):
     #     self.fields["user"].queryset = User.objects.filter(username=user)
 
 class CompanyAddressForm(forms.ModelForm):
-
     class Meta:
         model = CompanyAddress
         fields = '__all__' 
     
+class JobForm(forms.ModelForm):
+    class Meta:
+        model = Job
+        exclude =['company', 'applicants']
+
+    # def __init__(self,*args,**kwargs):
+    #     user = kwargs.pop('user') 
+    #     super(JobForm, self).__init__(*args,**kwargs)
+    #     self.fields["company"].queryset = Company.objects.filter(user = user)
+
+class StudentProfileForm(forms.ModelForm):
+    class Meta:
+        model = Student
+        exclude = ['skill','address']
+
+
+class StudentAddressForm(forms.ModelForm):
+    class Meta:
+        model = StudentAddress
+        fields = '__all__'
+
+
+class SkillForm(forms.ModelForm):
+    class Meta:
+        model = Skill
+        fields = '__all__'
+
     
 
 

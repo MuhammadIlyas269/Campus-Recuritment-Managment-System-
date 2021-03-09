@@ -8,14 +8,16 @@ from django.views.generic import (
 from django.views import View
 from . forms import (
     StudentSignupForm,CompanySignupForm, CompanyRequestForm, StudentRequestForm,
-    JobForm,CompanyProfileForm,CompanyAddressForm,
+    JobForm,CompanyProfileForm,CompanyAddressForm, StudentProfileForm, StudentAddressForm,
+    SkillForm,
 )
 from .models import (
     Student, User,Company,CompanyAddress,
 )
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
-
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django import db
 
 
 
@@ -34,10 +36,12 @@ def REDIRECT_VIEW(request):
 class StudentPage(TemplateView):
     template_name = 'studentPage.html'
 
-class CompanyPage(TemplateView):
+class CompanyPage(LoginRequiredMixin,TemplateView):
+    login_url = reverse_lazy('core:login')
     template_name = 'companyPage.html'
 
-class ModratorPage(TemplateView):
+class ModratorPage(LoginRequiredMixin,TemplateView):
+    login_url = reverse_lazy('core:login')
     template_name = 'modratorPage.html'
 
 class Home(TemplateView):
@@ -97,8 +101,7 @@ class StudentSignupRequestView(FormView):
         context['stud_id'] = valid_data['stud_id']
         context['card_front'] = valid_data['card_front']
         context['card_back'] = valid_data['card_back']
-    
-        
+       
         if valid_data['is_alumni']:
             context['transcript'] = valid_data['transcript']
         else:
@@ -153,8 +156,8 @@ class CompanySignupView(CreateView):
         login(self.request, user)
         return redirect('core:REDIRECT_VIEW')
 
-class CreateJobPostView(CreateView):
-
+class CreateJobPostView(LoginRequiredMixin,CreateView):
+    login_url = reverse_lazy('core:login')
     model = Job
     form_class=JobForm
     template_name = 'createJob.html'
@@ -166,8 +169,9 @@ class CreateJobPostView(CreateView):
 
 
 
-class CompanyProfileView(View):
-    
+class CompanyProfileView(LoginRequiredMixin,View):
+    login_url = reverse_lazy('core:login')
+
     def get(self, request, ):
         profile_form = CompanyProfileForm()
         address_form = CompanyAddressForm()
@@ -191,20 +195,38 @@ class CompanyProfileView(View):
 
 
             try:
-                company = Company(user=request.user,registration_no=company_cd['registration_no'], name=company_cd['name'], 
+                company_instance = Company(user=request.user,registration_no=company_cd['registration_no'], name=company_cd['name'], 
                 about=company_cd['about'],comp_email=company_cd['comp_email'],contact=company_cd['contact'],social_link=company_cd['social_link'],
                 website=company_cd['website'],address=address_instance)
-                company.save()  
-                
-
+                company_instance.save()  
             
-            except:
-                pass
+            except db.DataError:
+                address_instance.delete()
+                company_instance.delete()
 
             return redirect('core:company_page')
         return render(request, 'companyProfile.html',{'profile_form':profile_form, 'address_form':address_form})
     
-    
+
+class StudentProfileView(CreateView):
+    template_name = "studentProfile.html"
+    success_url = reverse_lazy('core:student_page')
+    form_classes = {
+        'profile_form': StudentProfileForm,
+        'address_form': StudentAddressForm,
+        'skill_form': SkillForm,
+    }
+
+    def profile_form_valid(self,form):
+        pass
+
+    def address_form_valid(self,form):
+        pass
+
+    def skill_form_valid(self,form):
+        pass
+
+    pass
 
     
     
